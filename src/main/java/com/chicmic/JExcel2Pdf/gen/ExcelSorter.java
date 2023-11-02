@@ -38,8 +38,9 @@ public class ExcelSorter {
             Workbook newWorkbook = new XSSFWorkbook();
             Sheet newSheet = newWorkbook.createSheet("Sorted Data");
 
-
             int rowIndex = 0;
+            double sum = 0.0; // Initialize the sum
+
             for (int i = 0; i < rows.size(); i++) {
                 Row sortedRow = rows.get(i);
                 Row newRow = newSheet.createRow(rowIndex++);
@@ -53,7 +54,7 @@ public class ExcelSorter {
                     }
                 }
 
-                // Check if the values in column D are the same as the next row and update column F
+                // Check if the values in column D are the same as the next row and update column G
                 if (i < rows.size() - 1) {
                     Row nextRow = rows.get(i + 1);
                     Cell currentCellD = sortedRow.getCell(columnIndexToSort);
@@ -61,20 +62,22 @@ public class ExcelSorter {
 
                     if (currentCellD != null && nextCellD != null) {
                         if (currentCellD.toString().equals(nextCellD.toString())) {
-                            continue;
-                            // Get the cells in column F and update their values
-//                            Cell currentCellF = newRow.createCell(5); // Assuming F is column 6 (0-based index)
-//                            Cell nextCellF = nextRow.getCell(5);
-//                            double currentCellValueF = currentCellF.getNumericCellValue();
-//                            double nextCellValueF = nextCellF.getNumericCellValue();
-//
-//                            currentCellF.setCellValue(currentCellValueF + nextCellValueF);
-                        }else {
-                            System.out.println("Name = " + currentCellD.toString());
+                            // Get the cells in column G and update their values
+                            Cell currentCellG = newRow.createCell(6); // Assuming G is column 7 (0-based index)
+                            Cell nextCellG = nextRow.getCell(6);
+                            double currentCellValueG = currentCellG.getNumericCellValue();
+                            double nextCellValueG = nextCellG.getNumericCellValue();
+                            sum += currentCellValueG;
+
+                        } else {
+                            // Values in column D are different; set the sum and reset it
+                            System.out.println("sum = " + sum);
+                            sum = 0; // Reset the sum
                         }
                     }
                 }
             }
+
             // Write the new workbook to an output file
             FileOutputStream fos = new FileOutputStream("output.xlsx"); // Replace with your output file name
             newWorkbook.write(fos);
@@ -83,10 +86,11 @@ public class ExcelSorter {
             // Close the input file
             fis.close();
 
-            System.out.println("Excel sheet sorted, excluding the first row, and new file generated based on column D.");
+            System.out.println("Excel sheet sorted, column G updated, and new file generated based on column D.");
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
+
 
 }

@@ -1,12 +1,10 @@
 package com.chicmic.JExcel2Pdf.gen;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
-import static com.chicmic.JExcel2Pdf.gen.ExcelRead.excelReadAndSort;
 import static com.chicmic.JExcel2Pdf.gen.ExcelSorter.excelReadAndSort2;
 
 
