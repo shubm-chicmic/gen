@@ -22,7 +22,7 @@ public class GenApplication {
 			properties.load(inputStream);
 
 
-			File excelFile = new File(path); // Excel File Read in current Directory
+			File excelFile = new File(path + "/" +FILE_NAME); // Excel File Read in current Directory
 			ExcelSorter excelSorter = new ExcelSorter();
 			File sortedExcelFile = excelSorter.excelManager(excelFile); // Excel File Sort acc to column D then F
 

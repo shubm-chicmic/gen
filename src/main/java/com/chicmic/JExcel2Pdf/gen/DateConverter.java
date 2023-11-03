@@ -14,7 +14,7 @@ public class DateConverter {
     }
     private static String convertDate(String inputDate) {
         try {
-            SimpleDateFormat inputFormat = new SimpleDateFormat("dd-MMM-yyyy");
+            SimpleDateFormat inputFormat = new SimpleDateFormat("dd-MM-yyyy"); // Correct format for your input date
             Date date = inputFormat.parse(inputDate);
 
             SimpleDateFormat dayFormat = new SimpleDateFormat("d");
@@ -31,6 +31,7 @@ public class DateConverter {
             return inputDate; // Return the original date in case of an error
         }
     }
+
 
     private static String addOrdinalIndicator(int day) {
         if (day >= 11 && day <= 13) {

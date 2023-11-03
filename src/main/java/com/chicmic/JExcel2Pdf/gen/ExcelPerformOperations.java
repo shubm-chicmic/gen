@@ -58,9 +58,9 @@ public class ExcelPerformOperations {
             rows.add(row);
         }
 
-
+        System.err.println("File Path exper = " + excelFile.getAbsolutePath());
         // use this to find the document paragraph index and run index by entering path of doc file
-        docxFileOperations.getParagraphAndRunIndices(excelFile.getAbsolutePath());
+//        docxFileOperations.getParagraphAndRunIndices(excelFile.getAbsolutePath());
 
         String prevD = "";
         String prevF = "";
@@ -74,9 +74,9 @@ public class ExcelPerformOperations {
                 String currentD = currentCellD.toString();
                 String currentF = sortedRow.getCell(indexOfRecipientColumnD + 2).toString();
                 String currentB = currentCellB.toString();
-                double cellValBillAmount = sortedRow.getCell(indexOfRecipientColumnD + 3).getNumericCellValue();
-                double cellValChargesAmount = sortedRow.getCell(indexOfRecipientColumnD + 4).getNumericCellValue();
-                double cellValFinalBillAmount = sortedRow.getCell(indexOfRecipientColumnD + 5).getNumericCellValue();
+                double cellValBillAmount = Double.parseDouble(sortedRow.getCell(indexOfRecipientColumnD + 3).toString());
+                double cellValChargesAmount = Double.parseDouble(sortedRow.getCell(indexOfRecipientColumnD + 4).toString());
+                double cellValFinalBillAmount = Double.parseDouble(sortedRow.getCell(indexOfRecipientColumnD + 5).toString());
 
                 if (prevD.equals(currentD)) {
                     if (currentF.equals(prevF)) {
