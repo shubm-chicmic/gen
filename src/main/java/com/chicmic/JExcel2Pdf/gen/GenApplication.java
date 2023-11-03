@@ -5,10 +5,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
-import static com.chicmic.JExcel2Pdf.gen.ExcelSorter.excelReadAndSort2;
+
 
 
 public class GenApplication {
+
+	private static final String FILE_NAME = "For Bank (August).xlsx";
+	private static final String path = System.getProperty("user.dir");
 
 	public static void main(String[] args) {
 		try {
@@ -17,22 +20,24 @@ public class GenApplication {
 
 			Properties properties = new Properties();
 			properties.load(inputStream);
-			String path = properties.getProperty("folder_path");
 
-			String targetFileName = "For Bank (August).xlsx";
-//			System.out.println("\u001B[31m " + targetFileName + " \u001B[0m");
-			File excelFile = searchForExcelFile(new File(path), targetFileName);
-			excelReadAndSort2(excelFile); // Read and sort cells based on column D
+
+			File excelFile = new File(path); // Excel File Read in current Directory
+			ExcelSorter excelSorter = new ExcelSorter();
+			File sortedExcelFile = excelSorter.excelManager(excelFile); // Excel File Sort acc to column D then F
+
+			ExcelPerformOperations excelPerformOperations = new ExcelPerformOperations();
+			excelPerformOperations.excelPerformOperations(sortedExcelFile);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
-	public static File searchForExcelFile(File directory, String targetFileName) {
+	public static File searchForFile(File directory, String targetFileName) {
 		File[] files = directory.listFiles();
 		if (files != null) {
 			for (File file : files) {
 				if (file.isDirectory()) {
-					File found = searchForExcelFile(file, targetFileName);
+					File found = searchForFile(file, targetFileName);
 					if (found != null) {
 						return found; // Return the found file if it's in a subdirectory
 					}

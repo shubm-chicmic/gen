@@ -1,26 +1,34 @@
 package com.chicmic.JExcel2Pdf.gen;
 
+import org.apache.commons.math3.util.Pair;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
+
+import static com.chicmic.JExcel2Pdf.gen.DateConverter.getTodaysDate;
+import static com.chicmic.JExcel2Pdf.gen.FolderCreate.pathBefore;
 
 public class ExcelSorter {
-    public static void excelReadAndSort2(File file) {
+
+
+    public File excelManager(File file) {
+        file = excelSortByColumn(file, 3);
+        file = excelSortByColumn(file, 5);
+        return file;
+    }
+    public File excelSortByColumn(File file, int columnIndex) {
+        File sortedFile = null;
         try {
             FileInputStream fis = new FileInputStream(file);
             Workbook workbook = new XSSFWorkbook(fis);
             Sheet sheet = workbook.getSheetAt(0); // Assuming it's the first sheet
 
-            // Create a custom comparator for sorting by column D (0-based index)
-            int columnIndexToSort = 3; // Column D is index 3 (0-based index)
-
+            // Create a custom comparator for sorting by the specified column
             Comparator<Row> comparator = (r1, r2) -> {
-                Cell cell1 = r1.getCell(columnIndexToSort);
-                Cell cell2 = r2.getCell(columnIndexToSort);
+                Cell cell1 = r1.getCell(columnIndex);
+                Cell cell2 = r2.getCell(columnIndex);
                 return cell1.toString().compareTo(cell2.toString());
             };
 
@@ -30,8 +38,6 @@ public class ExcelSorter {
                 Row row = sheet.getRow(rowIndex);
                 rows.add(row);
             }
-
-            // Sort the rows using the custom comparator
             rows.sort(comparator);
 
             // Create a new Excel workbook and sheet for the sorted data
@@ -39,10 +45,7 @@ public class ExcelSorter {
             Sheet newSheet = newWorkbook.createSheet("Sorted Data");
 
             int rowIndex = 0;
-            double sum = 0.0; // Initialize the sum
-
-            for (int i = 0; i < rows.size(); i++) {
-                Row sortedRow = rows.get(i);
+            for (Row sortedRow : rows) {
                 Row newRow = newSheet.createRow(rowIndex++);
 
                 for (int j = 0; j < sortedRow.getLastCellNum(); j++) {
@@ -53,44 +56,32 @@ public class ExcelSorter {
                         cell.setCellValue(originalCell.toString());
                     }
                 }
-
-                // Check if the values in column D are the same as the next row and update column G
-                if (i < rows.size() - 1) {
-                    Row nextRow = rows.get(i + 1);
-                    Cell currentCellD = sortedRow.getCell(columnIndexToSort);
-                    Cell nextCellD = nextRow.getCell(columnIndexToSort);
-
-                    if (currentCellD != null && nextCellD != null) {
-                        if (currentCellD.toString().equals(nextCellD.toString())) {
-                            // Get the cells in column G and update their values
-                            Cell currentCellG = newRow.createCell(6); // Assuming G is column 7 (0-based index)
-                            Cell nextCellG = nextRow.getCell(6);
-                            double currentCellValueG = currentCellG.getNumericCellValue();
-                            double nextCellValueG = nextCellG.getNumericCellValue();
-                            sum += currentCellValueG;
-
-                        } else {
-                            // Values in column D are different; set the sum and reset it
-                            System.out.println("sum = " + sum);
-                            sum = 0; // Reset the sum
-                        }
-                    }
-                }
             }
 
-            // Write the new workbook to an output file
-            FileOutputStream fos = new FileOutputStream("output.xlsx"); // Replace with your output file name
+            // Generate a unique file name for the sorted Excel file
+            String originalFileName = file.getName();
+            String sortedFileName = "sorted_" + originalFileName;
+            sortedFile = new File(sortedFileName);
+
+            // Write the new workbook to the sortedFile
+            FileOutputStream fos = new FileOutputStream(sortedFile);
             newWorkbook.write(fos);
             fos.close();
 
             // Close the input file
             fis.close();
 
-            System.out.println("Excel sheet sorted, column G updated, and new file generated based on column D.");
+            System.out.println("Excel sheet sorted based on column " + columnIndex + " and a new file generated: " + sortedFileName);
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        return sortedFile;
     }
+
+
+
+
 
 
 }
